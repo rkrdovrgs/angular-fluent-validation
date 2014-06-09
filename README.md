@@ -1,8 +1,8 @@
-angular-fluent-validation
+AngularJs Fluent Validation Api
 =========================
 
 Sample:
-http://jsfiddle.net/f7B3r/7/
+http://jsfiddle.net/f7B3r/8/
 
 
 
