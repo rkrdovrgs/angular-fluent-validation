@@ -223,7 +223,7 @@
                         });
 
                         if (!isFunction(valueToCompare))
-                            v.withMessage("'{{propertyName}}' must not be equal to '" + valueToCompare + "'.");
+                            v.withMessage("'{propertyName}' must not be equal to '" + valueToCompare + "'.");
 
                         return v;
 
@@ -241,7 +241,7 @@
                         });
 
                         if (!isFunction(valueToCompare))
-                            v.withMessage("'{{propertyName}}' must be equal to '" + valueToCompare + "'.");
+                            v.withMessage("'{propertyName}' must be equal to '" + valueToCompare + "'.");
 
                         return v;
 
@@ -254,9 +254,9 @@
                             return !isStringNullOrEmpty(x) && x.length >= min && x.length <= max;
                         });
                         if (max == undefined)
-                            v.withMessage("'{{propertyName}}' must be at least " + min + " characters.");
+                            v.withMessage("'{propertyName}' must be at least " + min + " characters.");
                         else
-                            v.withMessage("'{{propertyName}}' must be between" + min + " and " + max + " characters.");
+                            v.withMessage("'{propertyName}' must be between" + min + " and " + max + " characters.");
                         return v;
 
                     },
@@ -273,7 +273,7 @@
                         });
 
                         if (!isFunction(valueToCompare))
-                            v.withMessage("'{{propertyName}}' must be less than '" + valueToCompare + "'.");
+                            v.withMessage("'{propertyName}' must be less than '" + valueToCompare + "'.");
 
                         return v;
 
@@ -291,7 +291,7 @@
                         });
 
                         if (!isFunction(valueToCompare))
-                            v.withMessage("'{{propertyName}}' must be less than or equal to '" + valueToCompare + "'.");
+                            v.withMessage("'{propertyName}' must be less than or equal to '" + valueToCompare + "'.");
 
                         return v;
 
@@ -310,7 +310,7 @@
                         });
 
                         if (!isFunction(valueToCompare))
-                            v.withMessage("'{{propertyName}}' must be greater than '" + valueToCompare + "'.");
+                            v.withMessage("'{propertyName}' must be greater than '" + valueToCompare + "'.");
 
                         return v;
 
@@ -328,7 +328,7 @@
                         });
 
                         if (!isFunction(valueToCompare))
-                            v.withMessage("'{{propertyName}}' must be greater than or equal to '" + valueToCompare + "'.");
+                            v.withMessage("'{propertyName}' must be greater than or equal to '" + valueToCompare + "'.");
 
                         return v;
 
