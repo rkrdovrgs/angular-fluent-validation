@@ -23,6 +23,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.2.2"
+    "angular": "~1.2.2",
+    "angular-resource": "~1.2.18"
   }
 }
