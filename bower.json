@@ -3,7 +3,7 @@
   "version": "1.0.0.1",
   "homepage": "https://github.com/rkrdovrgs/angular-fluent-validation",
   "authors": [
-    "Ricardo Varga - rkrdo.vrgs@gmail.com"
+    "Ricardo Vargas<rkrdo.vrgs@gmail.com>"
   ],
   "description": "AngularJs/Javascript version of C# FluentValidationApi",
   "main": "ng-fluent-validation.min.js",
