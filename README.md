@@ -2,7 +2,7 @@ AngularJs Fluent Validation Api
 =========================
 
 Sample:
-http://jsfiddle.net/f7B3r/8/
+http://jsfiddle.net/f7B3r/9/
 
 
 
