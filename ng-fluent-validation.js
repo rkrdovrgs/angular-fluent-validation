@@ -250,8 +250,8 @@
                     length: function (min, max) {
 
                         var v = this.must(function (obj, x) {
-                            max = max || (x || '').length;
-                            return !isStringNullOrEmpty(x) && x.length >= min && x.length <= max;
+                            var iMax = max || (x || '').length;
+                            return !isStringNullOrEmpty(x) && x.length >= min && x.length <= iMax;
                         });
                         if (max == undefined)
                             v.withMessage("'{propertyName}' must be at least " + min + " characters.");

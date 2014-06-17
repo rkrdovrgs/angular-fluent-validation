@@ -1,0 +1,28 @@
+{
+  "name": "angular-fluent-validation",
+  "version": "0.0.0",
+  "homepage": "https://github.com/rkrdovrgs/angular-fluent-validation",
+  "authors": [
+    "Ricardo Varga - rkrdo.vrgs@gmail.com"
+  ],
+  "description": "AngularJs/Javascript version of C# FluentValidationApi",
+  "main": "ng-fluent-validation.min.js",
+  "keywords": [
+    "angular",
+    "angularjs",
+    "fluentvalidation",
+    "validation",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.2"
+  }
+}
