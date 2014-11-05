@@ -2,12 +2,23 @@
     'use strict';
 
     var ngFluentValidation = angular.module('ngFluentValidation', []);
+	
+	function get_deep_index(obj, index) {
+        var segments = index.split('.');
+        var segments_len = segments.length;
+        var currently_at = obj;
+        for (var idx = 0; idx < segments_len; idx++) {
+            currently_at = currently_at[segments[idx]];
+            if (currently_at === undefined || currently_at === null) return;
+        }
+        return currently_at;
+    }
 
     var serviceId = 'validator';
 
-    ngFluentValidation.factory(serviceId, [validator]);
+    ngFluentValidation.factory(serviceId, [validatorService]);
 
-    function validator() {
+    function validatorService() {
         // Define the functions and properties to reveal.
 
         //#region Dependencies
@@ -141,7 +152,7 @@
                 else {
                     propName = propSelector;
                     prop = function (x) {
-                        return x[propSelector];
+                        return get_deep_index(x, propName);
                     }
                 }
 
@@ -156,11 +167,17 @@
 
                     must: function (validator) {
                         validation.validator = validator;
-                        return {
+                        var tObj = {
                             withMessage: function (message) {
                                 validation.message = propName ? message.replace('{propertyName}', propName) : message;
+                            },
+                            when: function (condition) {
+                                validation.condition = condition;
+                                return tObj;
                             }
                         }
+
+                        return tObj;
                     },
 
                     //as: function (alias) {
@@ -192,7 +209,7 @@
                     //Built in validators
                     notNull: function () {
 
-                        var v = this.must(function (obj, x) { return x != undefined && x != null });
+                        var v = this.must(function (obj, x) { return x !== undefined && x !== null && x !== ''; });
                         v.withMessage("'{propertyName}' must not be null.");
                         return v;
 
@@ -201,10 +218,10 @@
                     notEmpty: function () {
 
                         var v = this.must(function (obj, x) {
-                            if (x == undefined || x == null) return false;
+                            if (x === undefined || x === null) return false;
                             if (angular.isNumber(x)) return x != 0;
                             if (angular.isArray(x)) return x.length > 0;
-                            return x.trim() != '';
+                            return x.toString().trim() != '';
                         });
                         v.withMessage("'{propertyName}' must not be empty.");
                         return v;
@@ -264,6 +281,7 @@
                     lessThan: function (valueToCompare) {
 
                         var v = this.must(function (obj, x) {
+							x = parseFloat(x);
                             var val = valueToCompare;
                             if (isFunction(valueToCompare)) {
                                 val = valueToCompare(obj);
@@ -282,6 +300,7 @@
                     lessThanOrEqual: function (valueToCompare) {
 
                         var v = this.must(function (obj, x) {
+							x = parseFloat(x);
                             var val = valueToCompare;
                             if (isFunction(valueToCompare)) {
                                 val = valueToCompare(obj);
@@ -300,6 +319,7 @@
                     greaterThan: function (valueToCompare) {
 
                         var v = this.must(function (obj, x) {
+							x = parseFloat(x);
                             var val = valueToCompare;
                             if (isFunction(valueToCompare)) {
                                 val = valueToCompare(obj);
@@ -319,6 +339,7 @@
                     greaterThanOrEqual: function (valueToCompare) {
 
                         var v = this.must(function (obj, x) {
+							x = parseFloat(x);
                             var val = valueToCompare;
                             if (isFunction(valueToCompare)) {
                                 val = valueToCompare(obj);
@@ -369,6 +390,7 @@
                 var errors = queryable.From(validations)
                    .Where(function (x) {
                        var propValue = x.propSelector(obj);
+                       if (x.condition && !x.condition(obj, propValue)) return false;
                        return !x.validator(obj, propValue);
                    })
                    .Select(function (x) {
@@ -472,37 +494,90 @@
     }
 
 
-    ngFluentValidation.directive('ngValidationResult', ["$compile", directiveImp]);
+    ngFluentValidation
+        .directive('ngValidationResult', ["$compile", ngValidationResult]);
 
-    function directiveImp($compile) {
+    function ngValidationResult($compile) {
         return {
             restrict: 'A',
-            scope: {},
+            scope: {
+                ngValidationResult: '='
+            },
             link: function (scope, element, attrs) {
+
                 scope.$$errorMessage = function () {
-                    var msg = scope.$parent.$eval(attrs.ngValidationResult);
+                    var msg = scope.ngValidationResult;
                     if (msg) {
                         element.addClass('has-error');
-                        return msg.join('\n');;
-                    }
-                    else
+                        return msg.join('\n');
+                    } else
                         element.removeClass('has-error');
-
                 }
 
-                var sp = angular.element('<span class="validation-control-field"></span>');
+                //var sp = angular.element('<span class="validation-control-field"></span>');
                 var icon = $compile(angular.element('<i class="glyphicon glyphicon-warning-sign validation-sign" '
+                    + 'ng-validation-visibility="{{ !!ngValidationResult }}"'
+                    + 'ng-show="ngValidationResult" '
                     + 'popover="{{ $$errorMessage() }}" '
                     + 'popover-placement="bottom" '
                     + 'popover-animation="false" '
                     + 'popover-trigger="mouseenter"></i>'))(scope);
 
-                var fc = element.find('.control-field');
+                var ctrl = element.find('label:first');
+                if (ctrl.size() > 0)
+                    ctrl.after(icon);
+                else
+                    element.append(icon);
 
-                fc.before(sp);
-                sp.append(icon);
-                sp.append(fc);
 
+
+            }
+        };
+    }
+
+    ngFluentValidation
+        .directive('ngValidationIcon', ["$compile", ngValidationIcon]);
+
+    function ngValidationIcon($compile) {
+        return {
+            restrict: 'A',
+            scope: {
+                ngValidationIcon: '='
+            },
+            link: function (scope, element, attrs) {
+
+                var icon = $compile(angular.element('<i class="glyphicon glyphicon-warning-sign validation-sign" '
+                    + 'ng-show="ngValidationIcon"></i>'))(scope);
+
+                element.append(icon);
+
+            }
+        };
+    }
+
+    ngFluentValidation
+        .directive('ngValidationGroupIcon', ["$compile", "$timeout", ngValidationGroupIcon]);
+
+    function ngValidationGroupIcon($compile, $timeout) {
+        return {
+            restrict: 'A',
+            scope: {
+                ngValidationErrors: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.showIcon = false;
+
+                scope.$watch('ngValidationErrors', function () {
+                    $timeout(function () {
+                        scope.showIcon = angular.element('section[ng-validation-group="' + attrs.ngValidationGroupIcon + '"]').find('i.validation-sign[ng-validation-visibility="true"]').size() > 0;
+                    });
+
+                }, true);
+
+                var icon = $compile(angular.element('<i class="glyphicon glyphicon-warning-sign validation-sign" '
+                    + 'ng-show="showIcon"></i>'))(scope);
+
+                element.append(icon);
 
             }
         };
