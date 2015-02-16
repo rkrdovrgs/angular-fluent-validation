@@ -25,7 +25,13 @@ mod.factory('models', function(){
         this.Age = null;
         this.IsFullTime = true;
         this.NumberOfCredits = 0;
+        this.Addresses = [];
         
+    };
+    
+    models.Address = function(){        
+        this.AddressLine = null;
+        this.Zipcode = null;
     };
     
     return models;
@@ -33,15 +39,17 @@ mod.factory('models', function(){
 ```
 
 
-Create your first validator
+Create your validators
 --
 ```javascript
-mod.factory('studentValidator', function(validator){
+mod.factory('studentValidator', function(validator, addressValidator){
     var studentValidator = s = new validator();
     
     s.ruleFor('Name').notEmpty();
     s.ruleFor('Name').length(3);
     s.ruleFor('Age').greaterThan(17);
+    
+    s.ruleFor('Addresses').setCollectionValidator(addressValidator).withMessage('Invalid Addresses');
     
     s.ruleFor('NumberOfCredits').greaterThanOrEqual(12).when(studentIsEnrolledFullTime);
     s.ruleFor('NumberOfCredits').lessThanOrEqual(18);
@@ -52,10 +60,19 @@ mod.factory('studentValidator', function(validator){
     
     return studentValidator;
 });
+
+mod.factory('addressValidator', function(validator){
+    var addressValidator = s = new validator();
+    
+    s.ruleFor('AddressLine').notEmpty();
+    s.ruleFor('Zipcode').length(5);
+    
+    
+    return addressValidator;
+});
 ```
 
-
-Using your validator
+Using your validators
 --
 ```javascript
 mod.controller('mainController', function(models, studentValidator, $scope){
@@ -64,6 +81,10 @@ mod.controller('mainController', function(models, studentValidator, $scope){
     vm.valResult = {};
     
     vm.newStudent = new models.Student();
+    
+    vm.addAddress = function(){
+        vm.newStudent.Addresses.push(new models.Address());
+    }
    
     vm.save = function(){
         var unregisterValidatorWatch =         
